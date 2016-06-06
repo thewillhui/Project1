@@ -14,41 +14,44 @@ Pseudo code
 */
 $(document).ready(function() {
   var gameLoop = null;
+  var blockLoop = null;
   var $character = $("#character");
   var characterMovement = 0;
   var $background = $("#background");
-  var $blockTop = $(".blockTop");
-  var bgXScroll = 0;
+  var randomInt = Math.floor((Math.random()*1000)+500);
 
-  $(document).on("keypress", function(e) {
+  // var bgXScroll = 0;
+
+  $(document).on("keyup", function(e) {
     if (e.keyCode == 32) {
       //how many times the character moves - multiplies the position.top below. higher value produces smoother movement but longer animations
       characterMovement += 20;
     }
   });
 
-  var gravity = function () {
+  var gravity = function() {
     var position = $character.position();
-    if (position.top >528) {
+    if (position.top > 528) {
       characterMovement = 0;
       //game over screen
     } else {
       //update this value to change gravity strength
-      $character.css({top: position.top + 6});
+      $character.css({ top: position.top + 6 });
     }
-
     if (characterMovement === 0) {
-      $character.css({transform: "initial"});
+      //set zero state for rotation
+      $character.css({ transform: "initial" });
     }
   };
 
-  var moveCharacter = function () {
+  var moveCharacter = function() {
     var position = $character.position();
     if (characterMovement > 0 && position.top > 0) {
       $character.css({
-        top: position.top - 2,
+        //how high the character will fly
+        // top: position.top - 0,
         //will rotate the character up when spacebar is pressed
-        transform: "rotate(" + (2 * (3 - characterMovement)) +"deg)"
+        transform: "rotate(" + (1 * (2 - characterMovement)) + "deg)"
       });
       characterMovement--;
     } else if (position.top <= 0) {
@@ -56,46 +59,61 @@ $(document).ready(function() {
     }
   };
 
-  var createBlockTop = function(){
-    var $newElem = $('<div class="blockTop"></div>')
-    $container.append($newElem);
+  var createBlockTop = function() {
+    var $newElem = $('<div></div>').addClass("blockTop")
+    $background.append($newElem);
+    var $blockTop = $(".blockTop");
+    $newElem.css({ marginLeft: "1000px" }).animate({ left: "-=1100" }, 3000, function() {
 
-    // .css to set the inital location
-    // $newElem.
-
-
+        //animation complete
+      })
+      // .css to set the inital location
+      // $newElem.
     // .animate to set the ending location
-  }
-
-  var blockTopMove = function() {
-    var position = $blockTop.position();
-    $blockTop.css({left: 600})
-    $blockTop.css({left: position.left - 2});
-  }
+  };
 
 
-  var createBlockBottom = function(){
 
 
-  }
+  var createBlockBottom = function() {
+  var $newElem = $('<div></div>').addClass("blockBottom")
+    $background.append($newElem);
+    var $blockTop = $(".blockBottom");
+    $newElem.css({ marginLeft: "1000px" }).animate({ left: "-=1100" }, 3000, function() {
+
+        //animation complete
+      })
+
+  };
 
   // var backgroundScroll = function() {
-  //   var position = $background.position();
-  //   bgXScroll--;
-  //   console.log(bgXScroll)
-  //   $background.animate("background-position", "0 bgXScroll");
+  //   var backgroundImage = $background.
 
-  // }
 
-  var startGame = function () {
-    $character.css({top: 30, left: 80});
+  // };
+
+  var startGame = function() {
+    $character.css({ top: 30, left: 80 });
+
+    //gameLoop loops functions that require to be run ~60 times per second
     gameLoop = setInterval(function() {
       gravity();
       moveCharacter();
       // backgroundScroll();
-      // blockTopMove();
     }, 17);
-    // createBlockTop();
+
+    blockLoop = setInterval(function() {
+      var position = $character.position();
+
+      //blocks stop being created if the character falls to the bottom of the screen i.e. dies
+      if (position.top >= 528) {
+        clearInterval(blockLoop)
+      } else {
+        createBlockTop();
+        createBlockBottom();
+      }
+    }, randomInt);
+
   };
 
   startGame();

@@ -44,9 +44,21 @@
 /*Blocks*/
 
 .blockTop {
-  width: 20px;
-  height: 100px;
-  background: red;
-  display: inline-block;
+  margin-top: -80px;
+  padding-top: 0;
+  width: 80px;
+  height: 228px;
+  background: url("./images/sandBricks.png");
+  background-repeat: repeat;
+  position: absolute;
+}
 
+.blockBottom {
+  margin-top: 295px;
+  padding-top: 0;
+  width: 80px;
+  height: 228px;
+  background: url("./images/sandBricks.png");
+  background-repeat: repeat;
+  position: absolute;
 }
