@@ -17,16 +17,12 @@
   transform: translate(-50%, -50%)
 }
 
-
-
 #background {
   background: url("./images/bgLg.png");
   background-repeat: repeat-x;
 }
 
-#ground {
-
-}
+#ground {}
 
 #innerContainer {
   position: relative;

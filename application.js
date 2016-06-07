@@ -68,7 +68,14 @@ $(document).ready(function() {
     var $newElem = $('<div></div>').addClass("blockTop")
     $innerContainer.append($newElem);
     var $blockTop = $(".blockTop");
-    $blockTop.css({ marginLeft: "1000px" }).animate({ left: "-=1100" }, 3000, function() {})
+    $blockTop.css({
+      marginLeft: "1000px"
+    }).animate({
+      left: "-=1100"
+    }, {
+      duration: 3000,
+      easing: 'linear'
+    });
       // .css to set the inital location
       // $newElem.
       // .animate to set the ending location
@@ -78,7 +85,14 @@ $(document).ready(function() {
     var $newElem = $('<div></div>').addClass("blockBottom")
     $innerContainer.append($newElem);
     var $blockBottom = $(".blockBottom");
-    $blockBottom.css({ marginLeft: "1000px" }).animate({ left: "-=1100" }, 3000, function() {})
+    $blockBottom.css({
+      marginLeft: "1000px"
+    }).animate({
+      left: "-=1100"
+    }, {
+      duration: 3000,
+      easing: 'linear'
+    });
   };
 
   var scroll = function(el, speed) {
@@ -103,7 +117,7 @@ $(document).ready(function() {
 
 
 
-//this function stops the animations and generation of blocks
+  //this function stops the animations and generation of blocks
   var stopGame = function() {
     var $blockTop = $(".blockTop");
     var $blockBottom = $(".blockBottom");
