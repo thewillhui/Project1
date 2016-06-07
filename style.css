@@ -1,4 +1,5 @@
 /*Containers for centering/layout*/
+
 #container {
   width: 100%;
   height: 100%
@@ -16,35 +17,42 @@
   transform: translate(-50%, -50%)
 }
 
-/*holds the character*/
+
+
 #background {
-  position: relative;
-  width: 1000px;
-  height: 600px;
-  background: url("./images/bg.png");
+  background: url("./images/bgLg.png");
   background-repeat: repeat-x;
 }
 
+#ground {
+
+}
+
+#innerContainer {
+  position: relative;
+  width: 1000px;
+  height: 600px;
+  overflow: hidden;
+}
 
 
 /*Character*/
 
 #character {
   position: relative;
-  display: inline-block;;
+  display: inline-block;
   background: url("./images/Mexican.png");
   background-repeat: no-repeat;
   background-position: -170px -159px;
   width: 69px;
   height: 72px;
-
 }
 
 
 /*Blocks*/
 
 .blockTop {
-  margin-top: -80px;
+  margin-top: -78px;
   padding-top: 0;
   width: 80px;
   height: 228px;
