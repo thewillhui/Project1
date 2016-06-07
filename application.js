@@ -14,35 +14,72 @@ Pseudo code
     5.1.3. Stop blocks from moving when character dies
 6. Collision detection
   6.1 If character hit box hits the same position as a block then stop
-
 */
-$(document).ready(function() {
-  var gameLoop = null;
-  var blockLoop = null;
-  var $character = $("#character");
-  var characterMovement = 0;
-  var $background = $("#background");
-  var $innerContainer = $("#innerContainer");
-  var randomInt = Math.floor((Math.random() * 3000) + 500);
 
-  // var bgXScroll = 0;
+$(document).ready(function() {
+  // Invertal Variables
+  var gameLoop  = null;
+
+  // HTML elements
+  var $character      = $("#character");
+  var $background     = $("#background");
+  var $innerContainer = $("#innerContainer");
+
+  // System Variable
+  var characterMovement           = 0;
+  var currentBlockGenerationSpeed = 1000;
+  var durationTillNextBlock       = currentBlockGenerationSpeed;
+
+  // Default Settings
+  var characterMovementIncrease = 20;
+  var keycode                   = 32; // Keycode for Spacebar
+
+  // Game Settings
+  var characterHeight          = 72;
+  var characterWidth           = 69;
+  var characterInitialTop      = 30;
+  var characterInitialLeft     = 80;
+  var xMin                     = 0;
+  var xMax                     = 1000;
+  var yMin                     = 0;
+  var yMax                     = 600;
+  var gravityIncrease          = 6;
+  var blockWidth               = 80;
+  var blockSpeedDuration       = 3000;
+  var backgroundScrollDuration = 60000;
+  var gameLoopDuration         = 17;
+
+  var randomInt = function () {
+    return Math.floor((Math.random() * 3000) + 500);
+  };
+
+  //this function stops the animations and generation of blocks
+  var stopGame = function() {
+    var $blockTop = $(".blockTop");
+    var $blockBottom = $(".blockBottom");
+    $blockTop.stop();
+    $blockBottom.stop();
+    $background.stop(true);
+    clearInterval(gameLoop);
+  };
 
   $(document).on("keyup", function(e) {
-    if (e.keyCode == 32) {
+    if (e.keyCode == keycode) {
       //how many times the character moves - multiplies the position.top below. higher value produces smoother movement but longer animations
-      characterMovement += 20;
+      characterMovement += characterMovementIncrease;
     }
   });
 
   var gravity = function() {
     var position = $character.position();
-    if (position.top > 528) {
+    if (position.top > yMax - characterHeight) {
       characterMovement = 0;
       //game over screen
     } else {
       //update this value to change gravity strength
-      $character.css({ top: position.top + 6 });
+      $character.css({ top: position.top + gravityIncrease });
     }
+
     if (characterMovement === 0) {
       //set zero state for rotation
       $character.css({ transform: "initial" });
@@ -51,47 +88,58 @@ $(document).ready(function() {
 
   var moveCharacter = function() {
     var position = $character.position();
-    if (characterMovement > 0 && position.top > 0) {
+    if (characterMovement > 0 && position.top > yMin) {
       $character.css({
-        //how high the character will fly
+        // how high the character will fly
         // top: position.top - 0,
         //will rotate the character up when spacebar is pressed
-        transform: "rotate(" + (1 * (2 - characterMovement)) + "deg)"
+        transform: "rotate(" + (2 - characterMovement) + "deg)"
       });
       characterMovement--;
-    } else if (position.top <= 0) {
+    } else if (position.top <= yMin) {
       characterMovement = 0;
     }
   };
 
-  var createBlockTop = function() {
-    var $newElem = $('<div></div>').addClass("blockTop")
+  var createBlock = function (blockClass) {
+    var $newElem = $('<div></div>').addClass(blockClass);
     $innerContainer.append($newElem);
-    var $blockTop = $(".blockTop");
-    $blockTop.css({
-      marginLeft: "1000px"
+    $newElem.css({
+      left: xMax
     }).animate({
-      left: "-=1100"
+      left: xMin - blockWidth
     }, {
-      duration: 3000,
-      easing: 'linear'
-    });
-      // .css to set the inital location
-      // $newElem.
-      // .animate to set the ending location
-  };
+      duration: blockSpeedDuration,
+      easing: 'linear',
+      complete: function () {
+        $(this).remove();
+      },
+      progress: function () {
+        var characterPos = $character.position();
+        var cLeft        = characterPos.left;
+        var cRight       = characterPos.left + characterWidth;
+        var cTop         = characterPos.top;
+        var cBot         = characterPos.top + characterHeight;
 
-  var createBlockBottom = function() {
-    var $newElem = $('<div></div>').addClass("blockBottom")
-    $innerContainer.append($newElem);
-    var $blockBottom = $(".blockBottom");
-    $blockBottom.css({
-      marginLeft: "1000px"
-    }).animate({
-      left: "-=1100"
-    }, {
-      duration: 3000,
-      easing: 'linear'
+        var $block       = $(this);
+        var blockTopPos  = $block.position();
+        var blockHeight  = $block.height();
+        var bLeft        = blockTopPos.left;
+        var bTop         = blockTopPos.top;
+        var bBot         = blockTopPos.top + blockHeight;
+
+        // cLeft < bLeft < cRight
+        var horizontalCollision = cLeft <= bLeft && bLeft <= cRight;
+
+        // bTop < cTop < bBot
+        // bTop < cBot < bBot
+        var vertialCollisionTop = bTop <= cTop && cTop <= bBot ;
+        var vertialCollisionBot = bTop <= cBot && cBot <= bBot ;
+
+        if (horizontalCollision && vertialCollisionTop && vertialCollisionBot) {
+          stopGame();
+        }
+      }
     });
   };
 
@@ -101,52 +149,35 @@ $(document).ready(function() {
       el.css('background-position', '0');
       scroll(el, speed);
     });
-  }
+  };
 
+  var blockGeneration = function () {
+    durationTillNextBlock -= gameLoopDuration;
 
-  var collision = function() {
-    var $characterPos = $character.position();
-    var $blockTopPos = $blockTop.position();
-    var $blockBottomPos = $blockBottom.position();
-
-
-  }
-
-
-
-
-
-
-  //this function stops the animations and generation of blocks
-  var stopGame = function() {
-    var $blockTop = $(".blockTop");
-    var $blockBottom = $(".blockBottom");
-    $blockTop.stop();
-    $blockBottom.stop();
-    $background.stop(true);
-    clearInterval(blockLoop);
-  }
-
+    if (durationTillNextBlock <= 0) {
+      // [300, 200]
+      createBlock("blockTop");
+      createBlock("blockBottom");
+      durationTillNextBlock = currentBlockGenerationSpeed;
+    }
+  };
 
   var startGame = function() {
-    $character.css({ top: 30, left: 80 });
+    $character.css({ top: characterInitialTop, left: characterInitialLeft });
+
     //gameLoop loops functions that require to be run ~60 times per second
     gameLoop = setInterval(function() {
       var position = $character.position();
-      if (position.top >= 528) {
+      if (position.top >= yMax - characterHeight) {
         stopGame();
       } else {
         gravity();
         moveCharacter();
-        scroll($background, 60000);
+        scroll($background, backgroundScrollDuration);
       }
-    }, 17);
 
-    blockLoop = setInterval(function() {
-      var position = $character.position();
-      createBlockTop();
-      createBlockBottom();
-    }, randomInt);
+      blockGeneration();
+    }, gameLoopDuration);
   };
 
   startGame();

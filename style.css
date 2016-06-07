@@ -1,23 +1,24 @@
 /*Containers for centering/layout*/
-
-#container {
-  width: 100%;
-  height: 100%
+body {
+  width: 100vw;
+  height: 100vh;
 }
 
-#viewport {
+#gamescreen {
+  position: absolute;
   width: 1002px;
   height: 602px;
   border: 1px solid black;
-  margin: 0;
-  position: absolute;
+  margin: 0 -50% 0 0;
   top: 50%;
   left: 50%;
-  margin-right: -50%;
   transform: translate(-50%, -50%)
 }
 
 #background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   background: url("./images/bgLg.png");
   background-repeat: repeat-x;
 }
@@ -25,9 +26,9 @@
 #ground {}
 
 #innerContainer {
-  position: relative;
-  width: 1000px;
-  height: 600px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -48,21 +49,21 @@
 /*Blocks*/
 
 .blockTop {
-  margin-top: -78px;
-  padding-top: 0;
-  width: 80px;
-  height: 228px;
+  position: absolute;
   background: url("./images/sandBricks.png");
   background-repeat: repeat;
-  position: absolute;
+  padding-top: 0;
+  top: 0;
+  width: 80px;
+  height: 228px;
 }
 
 .blockBottom {
-  margin-top: 295px;
-  padding-top: 0;
-  width: 80px;
-  height: 228px;
+  position: absolute;
   background: url("./images/sandBricks.png");
   background-repeat: repeat;
-  position: absolute;
+  padding-top: 0;
+  top: 372px;
+  width: 80px;
+  height: 228px;
 }
