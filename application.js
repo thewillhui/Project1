@@ -44,7 +44,7 @@ $(document).ready(function() {
   // Game Settings
   var characterHeight = 72;
   var characterWidth = 69;
-  var characterInitialTop = 250;
+  var characterInitialTop = 220;
   var characterInitialLeft = 80;
   var xMin = 0;
   var xMax = 1000;
@@ -58,11 +58,13 @@ $(document).ready(function() {
   var groundScrollDuration = 20000;
   var gameLoopDuration = 17;
 
+  //Sounds and music
+  var mexicanMusic = new buzz.sound("./sounds/mexicanAnthem8.mp3")
+
+
   //Scoring
-  var player1;
-  var player2;
-  var p1BestScore = 0;
-  var p2BestScore = 0;
+  var player;
+  var BestScore = 0;
   var currScore = 0;
 
   //Random height generator for the blocks
@@ -88,6 +90,9 @@ $(document).ready(function() {
 
   //game waits for user input before initiating
   var gameWait = function() {
+    mexicanMusic.play().loop(true);
+    scroll($ground, groundScrollDuration);
+    scroll($background, backgroundScrollDuration);
     $character.css({ top: characterInitialTop, left: characterInitialLeft })
     if (started === false) {
       bounce = setInterval(function() {
@@ -95,8 +100,6 @@ $(document).ready(function() {
         $pressPlay.effect("pulsate", { times: 0.5 }, 1000);
       }, 1000);
     }
-    scroll($ground, groundScrollDuration);
-    scroll($background, backgroundScrollDuration);
   }
 
   $(document).on("keyup", function(e) {
