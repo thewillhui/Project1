@@ -33,6 +33,7 @@ $(document).ready(function() {
   var $scoreScreen = $("#scoreScreen");
   var $playerScore = $("#playerScore");
   var $bestScore = $("#bestScore");
+  var $restartBtn = $("#restartBtn");
 
   // System Variable
   var characterMovement = 0;
@@ -58,14 +59,15 @@ $(document).ready(function() {
   var blockWidth = 80;
   var blockSpeedDuration = 2000;
 
+  //Scroll Speed
   var backgroundScrollDuration = 50000;
   var groundScrollDuration = 20000;
   var gameLoopDuration = 17;
 
   //Sounds and music
-  var mexicanMusic = new buzz.sound("./sounds/mexicanAnthem8.mp3", {preload:true, loop: true});
-  var muricaMusic = new buzz.sound("./sounds/usaAnthem8.mp3", {preload:true, loop: true});
-  var trump10ftTall = new buzz.sound("./sounds/trump10ftTaller.mp3", {preload:true, loop: false});
+  var mexicanMusic = new buzz.sound("./sounds/mexicanAnthem8.mp3", { preload: true, loop: true });
+  var muricaMusic = new buzz.sound("./sounds/usaAnthem8.mp3", { preload: true, loop: true });
+  var trump10ftTall = new buzz.sound("./sounds/trump10ftTaller.mp3", { preload: true, loop: false });
 
   //Scoring
   var player;
@@ -79,21 +81,21 @@ $(document).ready(function() {
   };
 
   //Random interval generator for block generation frequency
-  var randomInt = function() {
-    return Math.floor((Math.random() * 3000) + 500);
-  };
+  // var randomInt = function() {
+  //   return Math.floor((Math.random() * 3000) + 500);
+  // };
 
   //this function stops the animations and generation of blocks
   var stopGame = function() {
+    clearInterval(gameLoop);
     isCharacterDead = true;
-    score();
     var $blockTop = $(".blockTop");
     var $blockBottom = $(".blockBottom");
-    $blockTop.stop();
-    $blockBottom.stop();
+    $blockTop.stop(true);
+    $blockBottom.stop(true);
     $background.stop(true);
     $ground.stop(true);
-    clearInterval(gameLoop);
+    score();
   };
 
   //game waits for user input before initiating
@@ -116,9 +118,12 @@ $(document).ready(function() {
       //how many times the character moves - multiplies the position.top below. higher value produces smoother movement but longer animations
       characterMovement += characterMovementIncrease;
       if (started == false) {
-        started = true;
-        $character.stop();
         clearInterval(bounce);
+        $character.stop(true, true);
+        $character.appendTo($innerContainer);
+        $(".ui-effects-wrapper").remove();
+        $character.css({ top: characterInitialTop, left: characterInitialLeft })
+        started = true;
         startGame();
       }
     }
@@ -189,25 +194,15 @@ $(document).ready(function() {
         var bTop = blockPos.top;
         var bBot = blockPos.top + blockHeight;
 
-        // cLeft < bLeft < cRight
-        var horizontalCollisionL = cLeft <= bLeft && bLeft <= cRight;
-        var horizontalCollisionR = cRight <= bRight && bLeft <= cRight;
+        var horizontalCollision = cLeft < bRight && bLeft < cRight;
+        var verticalCollision = cTop < bBot && cBot > bTop;
 
-        // bTop < cTop < bBot
-        // bTop < cBot < bBot
-        var verticalCollisionTop = bTop <= cTop && cTop <= bBot;
-        var verticalCollisionBot = bTop <= cBot && cBot <= bBot;
-
-        if (horizontalCollisionL && horizontalCollisionR && verticalCollisionTop && verticalCollisionBot) {
-
+        if (horizontalCollision && verticalCollision) {
           stopGame();
-
         }
       }
     });
   };
-
-
 
   var scroll = function(el, speed) {
     //scrolls the background, time controls the speed
@@ -229,21 +224,34 @@ $(document).ready(function() {
     }
   };
 
-  window.score = function() {
+  var score = function() {
     mexicanMusic.stop();
     trump10ftTall.play();
     muricaMusic.play().fadeIn(4).loop(true);
-    var actualScore = currScore/2;
+    var actualScore = currScore / 2;
     $scoreScreen.show();
-    $playerScore.append('<h1 class="scoreText">' + actualScore + "</h1>");
+    $playerScore.html('<h1 class="scoreText">' + actualScore + '</h1>');
     //append currScore to bestScore array, return highest score
     bestScore.push(actualScore);
     var maxScore = Math.max.apply(Math, bestScore);
-    $bestScore.append('<h1 class="scoreText">' + maxScore + "</h1>");
-    console.log(actualScore)
+    $bestScore.html('<h1 class="scoreText">' + maxScore + '</h1>');
+    $restartBtn.off().on("click", resetGame);
   };
 
-
+  var resetGame = function() {
+    muricaMusic.stop();
+    var $blockTop = $(".blockTop");
+    var $blockBottom = $(".blockBottom");
+    $blockTop.remove();
+    $blockBottom.remove();
+    currScore = 0;
+    isCharacterDead = false;
+    characterMovement = 0;
+    started = false;
+    $character.css({ transform: "initial" });
+    $startScreen.show();
+    gameWait();
+  };
 
   var startGame = function() {
     $startScreen.hide();
@@ -258,8 +266,8 @@ $(document).ready(function() {
       }
       blockGeneration();
     }, gameLoopDuration);
-    // score();
   };
   //loop end
-  gameWait()
+  gameWait();
+
 });
