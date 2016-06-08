@@ -18,14 +18,12 @@ body {
 
 
 /*Game start screen*/
-
-
 #pressPlay {
   position: absolute;
   width: 342px;
   height: 40px;
   top: 500px;
-  left: 350px;
+  left: 100px;
   background: url("./images/pressPlay.png");
   background-repeat: no-repeat;
 }
@@ -34,12 +32,94 @@ body {
   position: absolute;
   width: 600px;
   height: 600px;
+  top: 10px;
   left: 250px;
   background: url("./images/startScreen.png");
   background-repeat: no-repeat;
 }
 
+/*Score screen when character dies*/
+#scoreScreen {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  top: 100px;
+  left: 250px;
+  background: url("./images/scoreScreen.png");
+  background-repeat: no-repeat;
+  z-index: 1;
+}
 
+
+
+#loserText {
+  position: absolute;
+  width: 538px;
+  height: 45px;
+  top: 25px;
+  left: 30px;
+  background: url("./images/loserText.png");
+  background-repeat: no-repeat;
+}
+
+#playerScore {
+  position: absolute;
+  width: 196px;
+  height: 39px;
+  top: 160px;
+  left: 30px;
+  background: url("./images/playerScore.png");
+  background-repeat: no-repeat;
+
+}
+
+#bestScore {
+  position: absolute;
+  width: 196px;
+  height: 40px;
+  top: 100px;
+  left: 30px;
+  background: url("./images/bestScore.png");
+  background-repeat: no-repeat;
+
+}
+
+.scoreText {
+  font-family: sans-serif;
+  font-size: 2.5em;
+  margin: 0 0 0 230px;
+  color: blue;
+}
+
+#restartBtn {
+  position: absolute;
+  width: 168px;
+  height: 90px;
+  top: 280px;
+  left: 35px;
+  background: url("./images/playBtnDownSml.png");
+  background-repeat: no-repeat;
+}
+
+#restartBtn:hover {
+  background: url("./images/playBtnUpSml.png");
+  background-repeat: no-repeat;
+}
+
+#restartBtn:active {
+  background: url("./images/playBtnDownSml.png");
+  background-repeat: no-repeat;
+}
+
+#trump {
+  position: absolute;
+  width: 400px;
+  height: 327px;
+  top: 175px;
+  left: 280px;
+  background: url("./images/trumpScore.png");
+  background-repeat: no-repeat;
+}
 
 /*Game background*/
 #background {

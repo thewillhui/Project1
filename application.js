@@ -30,6 +30,9 @@ $(document).ready(function() {
   var $innerContainer = $("#innerContainer");
   var $startScreen = $("#startScreen");
   var $pressPlay = $("#pressPlay");
+  var $scoreScreen = $("#scoreScreen");
+  var $playerScore = $("#playerScore");
+  var $bestScore = $("#bestScore");
 
   // System Variable
   var characterMovement = 0;
@@ -40,6 +43,7 @@ $(document).ready(function() {
   var characterMovementIncrease = 20;
   var keycode = 32; // Keycode for Spacebar
   var started = false;
+  var isCharacterDead = false;
 
   // Game Settings
   var characterHeight = 72;
@@ -64,8 +68,9 @@ $(document).ready(function() {
 
   //Scoring
   var player;
-  var BestScore = 0;
+  var bestScore = [];
   var currScore = 0;
+
 
   //Random height generator for the blocks
   var randBlockHeight = function() {
@@ -79,6 +84,8 @@ $(document).ready(function() {
 
   //this function stops the animations and generation of blocks
   var stopGame = function() {
+    isCharacterDead = true;
+    score();
     var $blockTop = $(".blockTop");
     var $blockBottom = $(".blockBottom");
     $blockTop.stop();
@@ -93,6 +100,7 @@ $(document).ready(function() {
     mexicanMusic.play().loop(true);
     scroll($ground, groundScrollDuration);
     scroll($background, backgroundScrollDuration);
+    $scoreScreen.hide();
     $character.css({ top: characterInitialTop, left: characterInitialLeft })
     if (started === false) {
       bounce = setInterval(function() {
@@ -142,7 +150,9 @@ $(document).ready(function() {
       });
       characterMovement--;
     } else if (position.top <= yMin) {
+      //character dies if he hits the bottom of the screen
       characterMovement = 0;
+      isCharacterDead = true;
     }
   };
 
@@ -160,6 +170,7 @@ $(document).ready(function() {
       easing: 'linear',
       complete: function() {
         $(this).remove();
+        currScore += 1;
       },
       progress: function() {
         var characterPos = $character.position();
@@ -187,11 +198,14 @@ $(document).ready(function() {
         var verticalCollisionBot = bTop <= cBot && cBot <= bBot;
 
         if (horizontalCollisionL && horizontalCollisionR && verticalCollisionTop && verticalCollisionBot) {
+
           stopGame();
+
         }
       }
     });
   };
+
 
 
   var scroll = function(el, speed) {
@@ -214,14 +228,16 @@ $(document).ready(function() {
     }
   };
 
-  // var score = function () {
-  // var blockPos = $newElem.position().left
-  //       //score +1 for passing through each block
-  //       if (blockPos <= 0 ) {
-  //         currScore += 1 ;
-  //       }
-  // console.log(currScore);
-  // };
+  window.score = function() {
+    var actualScore = currScore/2;
+    $scoreScreen.show();
+    $playerScore.append('<h1 class="scoreText">' + actualScore + "</h1>");
+    //append currScore to bestScore array, return highest score
+    bestScore.push(actualScore);
+    var maxScore = Math.max.apply(Math, bestScore);
+    $bestScore.append('<h1 class="scoreText">' + maxScore + "</h1>");
+    console.log(actualScore)
+  };
 
 
 
