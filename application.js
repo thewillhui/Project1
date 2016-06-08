@@ -43,7 +43,7 @@ $(document).ready(function() {
   var characterMovementIncrease = 20;
   var keycode = 32; // Keycode for Spacebar
   var started = false;
-  var isCharacterDead = false;
+  var isCharacterDead = false; //check if character is dead used for score function
 
   // Game Settings
   var characterHeight = 72;
@@ -63,8 +63,9 @@ $(document).ready(function() {
   var gameLoopDuration = 17;
 
   //Sounds and music
-  var mexicanMusic = new buzz.sound("./sounds/mexicanAnthem8.mp3")
-
+  var mexicanMusic = new buzz.sound("./sounds/mexicanAnthem8.mp3", {preload:true, loop: true});
+  var muricaMusic = new buzz.sound("./sounds/usaAnthem8.mp3", {preload:true, loop: true});
+  var trump10ftTall = new buzz.sound("./sounds/trump10ftTaller.mp3", {preload:true, loop: false});
 
   //Scoring
   var player;
@@ -97,7 +98,7 @@ $(document).ready(function() {
 
   //game waits for user input before initiating
   var gameWait = function() {
-    mexicanMusic.play().loop(true);
+    mexicanMusic.play()
     scroll($ground, groundScrollDuration);
     scroll($background, backgroundScrollDuration);
     $scoreScreen.hide();
@@ -229,6 +230,9 @@ $(document).ready(function() {
   };
 
   window.score = function() {
+    mexicanMusic.stop();
+    trump10ftTall.play();
+    muricaMusic.play().fadeIn(4).loop(true);
     var actualScore = currScore/2;
     $scoreScreen.show();
     $playerScore.append('<h1 class="scoreText">' + actualScore + "</h1>");

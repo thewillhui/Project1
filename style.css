@@ -50,8 +50,6 @@ body {
   z-index: 1;
 }
 
-
-
 #loserText {
   position: absolute;
   width: 538px;
@@ -66,22 +64,20 @@ body {
   position: absolute;
   width: 196px;
   height: 39px;
-  top: 160px;
+  top: 100px;
   left: 30px;
   background: url("./images/playerScore.png");
   background-repeat: no-repeat;
-
 }
 
 #bestScore {
   position: absolute;
   width: 196px;
   height: 40px;
-  top: 100px;
+  top: 160px;
   left: 30px;
   background: url("./images/bestScore.png");
   background-repeat: no-repeat;
-
 }
 
 .scoreText {
