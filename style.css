@@ -1,5 +1,7 @@
 /*Containers for centering/layout*/
 body {
+  background: url("./images/greyWall.jpg");
+  background-repeat: repeat;
   width: 100vw;
   height: 100vh;
 }
@@ -54,10 +56,8 @@ body {
   position: absolute;
   width: 538px;
   height: 45px;
-  top: 25px;
+  top: -250px;
   left: 30px;
-  background: url("./images/loserText.png");
-  background-repeat: no-repeat;
 }
 
 #playerScore {
@@ -112,7 +112,7 @@ body {
   width: 400px;
   height: 327px;
   top: 175px;
-  left: 280px;
+  left: 1000px;
   background: url("./images/trumpScore.png");
   background-repeat: no-repeat;
 }
@@ -122,8 +122,23 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+  top: -50px;
   background: url("./images/bgLg.png");
   background-repeat: repeat-x;
+  -webkit-animation: backgroundScroll 80s linear infinite;
+  animation: backgroundScroll 80s linear infinite;
+  -webkit-animation-play-state: running;
+  animation-play-state: running;
+}
+
+@-webkit-keyframes backgroundScroll {
+from {background-position: 0 0;}
+to {background-position: -800px 0;}
+}
+
+@keyframes backgroundScroll {
+from {background-position: 0 0;}
+to {background-position: -800px 0;}
 }
 
 /*Game foreground*/
@@ -131,9 +146,35 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  top: 250px;
+  top: 480px;
   background: url("./images/desertSml.png");
   background-repeat: repeat-x;
+  -webkit-animation: groundScroll 1s linear infinite;
+  animation: groundScroll 1s linear infinite;
+  -webkit-animation-play-state: running;
+  animation-play-state: running;
+}
+
+@-webkit-keyframes groundScroll {
+from {background-position: 0 0;}
+to {background-position: -64px 0;}
+}
+
+@keyframes groundScroll {
+from {background-position: 0 0;}
+to {background-position: -64px 0;}
+}
+
+
+/*USA this way arrow animation*/
+#usa {
+  position: absolute;
+  width: 247px;
+  height: 72px;
+  top: 300px;
+  background: url("./images/usa.png");
+  background-repeat: no-repeat;
+  z-index: 1;
 }
 
 /*Container for character and for blocks to generate into*/
@@ -151,9 +192,9 @@ body {
   display: inline-block;
   background: url("./images/MexicanL.png");
   background-repeat: no-repeat;
-  background-position: -170px -159px;
-  width: 69px;
-  height: 72px;
+  background-position: -170px -168px;
+  width: 63px;
+  height: 56px;
 }
 
 

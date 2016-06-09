@@ -1,4 +1,4 @@
-/*
+        /*
 Pseudo code
 
 1. Create viewport
@@ -13,64 +13,84 @@ Pseudo code
     5.1.2. Stop blocks from being generated when character dies
     5.1.3. Stop blocks from moving when character dies
 6. Collision detection
-  6.1 If character hit box hits the same position as a block then stop
+  6.1. If character hit box hits the same position as a block then stop
+  6.2 Adjust character box boundaries to minimise transparent space
 7. Title screen
   7.1. Character floats waiting for user input. Game starts on user input
+  7.2. Use Buzz to add Mexican national anthem to title screen - loop audio
+8. Scores
+  8.1. Calculate scores for each block that passes the character - or when animation finishes
+  8.2. Divide score by 2 as there are 2 blocks that pass at the same time
+  8.3. Push current score to an array
+  8.4. Math.max the array to get the current highest score
+  8.5. Display current and best score on one screen
+    8.5.1. Stop Mexican music on score screen
+    8.5.2. Play Trump soundbite then USA national anthem
+9. Add reset button to score screen
+  9.1. Reset all values and variables back to initial state and rerun the title screen game loop
+
 */
 
 $(document).ready(function() {
   // Interval Variables
   var gameLoop = null;
-  var bounce = null;
+  var bounce   = null;
 
   // HTML elements
-  var $character = $("#character");
-  var $background = $("#background");
-  var $ground = $("#ground");
+  var $character      = $("#character");
+  var $background     = $("#background");
+  var $ground         = $("#ground");
   var $innerContainer = $("#innerContainer");
-  var $startScreen = $("#startScreen");
-  var $pressPlay = $("#pressPlay");
-  var $scoreScreen = $("#scoreScreen");
-  var $playerScore = $("#playerScore");
-  var $bestScore = $("#bestScore");
-  var $restartBtn = $("#restartBtn");
+  var $startScreen    = $("#startScreen");
+  var $pressPlay      = $("#pressPlay");
+  var $scoreScreen    = $("#scoreScreen");
+  var $playerScore    = $("#playerScore");
+  var $bestScore      = $("#bestScore");
+  var $restartBtn     = $("#restartBtn");
+  var $loserText      = $("#loserText");
+  var $trump          = $("#trump");
+  var $usa            = $("#usa");
 
   // System Variable
-  var characterMovement = 0;
-  var currentBlockGenerationSpeed = 700;
-  var durationTillNextBlock = currentBlockGenerationSpeed;
+  var characterMovement           = 0;
+  var currentBlockGenerationSpeed = 0;
+  var durationTillNextBlock       = currentBlockGenerationSpeed;
 
   // Default Settings
   var characterMovementIncrease = 20;
-  var keycode = 32; // Keycode for Spacebar
-  var started = false;
-  var isCharacterDead = false; //check if character is dead used for score function
+  var keycode                   = 32; // Keycode for Spacebar
+  var started                   = false;
+  var isCharacterDead           = false; //check if character is dead used for score function
 
   // Game Settings
-  var characterHeight = 72;
-  var characterWidth = 69;
-  var characterInitialTop = 220;
-  var characterInitialLeft = 80;
-  var xMin = 0;
-  var xMax = 1000;
-  var yMin = 0;
-  var yMax = 600;
-  var gravityIncrease = 6;
-  var blockWidth = 80;
-  var blockSpeedDuration = 2000;
+  var characterHeight       = 56;
+  var characterWidth        = 63;
+  var characterInitialTop   = 220;
+  var characterInitialLeft  = 80;
+  var xMin                  = 0;
+  var xMax                  = 1000;
+  var yMin                  = 0;
+  var yMax                  = 600;
+  var gravityIncrease       = 6;
+  var blockWidth            = 80;
+  var blockSpeedDuration    = 2000;
 
   //Scroll Speed
   var backgroundScrollDuration = 50000;
-  var groundScrollDuration = 20000;
-  var gameLoopDuration = 17;
+  var groundScrollDuration     = 20000;
+  var gameLoopDuration         = 17;
 
   //Sounds and music
-  var mexicanMusic = new buzz.sound("./sounds/mexicanAnthem8.mp3", { preload: true, loop: true });
-  var muricaMusic = new buzz.sound("./sounds/usaAnthem8.mp3", { preload: true, loop: true });
-  var trump10ftTall = new buzz.sound("./sounds/trump10ftTaller.mp3", { preload: true, loop: false });
+  var mexicanMusic            = new buzz.sound("./sounds/mexicanAnthem8.mp3",
+                                { preload: true, loop: true });
+  var muricaMusic             = new buzz.sound("./sounds/usaAnthem8.mp3",
+                                { preload: true, loop: false });
+  var greatWall               = new buzz.sound("./sounds/greatWall.mp3",
+                                { preload: true, loop: false });
+  var trump10ftTall           = new buzz.sound("./sounds/trump10ftTaller.mp3",
+                                { preload: true, loop: false });
 
   //Scoring
-  var player;
   var bestScore = [];
   var currScore = 0;
 
@@ -93,52 +113,54 @@ $(document).ready(function() {
     var $blockBottom = $(".blockBottom");
     $blockTop.stop(true);
     $blockBottom.stop(true);
-    $background.stop(true);
-    $ground.stop(true);
+    $ground.css({"-webkit-animation-play-state": "paused", "animation-play-state": "paused"})
+    $background.css({"-webkit-animation-play-state": "paused", "animation-play-state": "paused"})
     score();
   };
 
   //game waits for user input before initiating
   var gameWait = function() {
-    mexicanMusic.play()
-    scroll($ground, groundScrollDuration);
-    scroll($background, backgroundScrollDuration);
+    setTimeout(function() {
+    muricaMusic.stop();
+    },700); // extra stop here in case user clicks reset before music is loaded on score screen
+    mexicanMusic.play();
+    $usa.hide();
     $scoreScreen.hide();
     $character.css({ top: characterInitialTop, left: characterInitialLeft })
-    if (started === false) {
+    if (started == false) {
       bounce = setInterval(function() {
-        $character.effect("bounce", { times: 1 }, 1000);
-        $pressPlay.effect("pulsate", { times: 0.5 }, 1000);
+        $character.effect("bounce", { times: 1 }, 1000); //adds a floating effect to the character
+        $pressPlay.effect("pulsate", { times: 0.5 }, 1000); //adds a flashing effect to press play text like in retro games
       }, 1000);
     }
   }
 
+//this function is for listening to user hitting spacebar
   $(document).on("keyup", function(e) {
     if (e.keyCode == keycode) {
       //how many times the character moves - multiplies the position.top below. higher value produces smoother movement but longer animations
       characterMovement += characterMovementIncrease;
       if (started == false) {
-        clearInterval(bounce);
-        $character.stop(true, true);
-        $character.appendTo($innerContainer);
+        clearInterval(bounce); //once user hits spacebar the bounce effect loop stops
+        $character.stop(true, true); //stops all animation on character
+        $character.appendTo($innerContainer); //jQuery UI effects places the character div into a wrapper div. this just places the character back in the correct place
         $(".ui-effects-wrapper").remove();
-        $character.css({ top: characterInitialTop, left: characterInitialLeft })
+        $character.css({ top: characterInitialTop, left: characterInitialLeft }) //sets the starting position
         started = true;
         startGame();
       }
     }
   });
 
+//this function adds gravity to the character
   var gravity = function() {
     var position = $character.position();
     if (position.top > yMax - characterHeight) {
       characterMovement = 0;
-      //game over screen
     } else {
       //update this value to change gravity strength
       $character.css({ top: position.top + gravityIncrease });
     }
-
     if (characterMovement === 0) {
       //set zero state for rotation
       $character.css({ transform: "initial" });
@@ -162,62 +184,55 @@ $(document).ready(function() {
     }
   };
 
+//creates new block elements
   var createBlock = function(blockClass) {
-    var $newElem = $('<div></div>').addClass(blockClass);
-    var rBlockHeight = randBlockHeight();
-    $innerContainer.append($newElem);
+    var $newElem = $('<div></div>').addClass(blockClass); //adds a class to identify blocks at the top and bottom
+    var rBlockHeight = randBlockHeight(); //block heights are randomly generated
+    $innerContainer.append($newElem); //places the new block inside the inner container div
     $newElem.css({
       left: xMax,
       height: rBlockHeight
-    }).animate({
+    }).animate({ //animates the block to move from right to left
       left: xMin - blockWidth
     }, {
       duration: blockSpeedDuration,
       easing: 'linear',
       complete: function() {
-        $(this).remove();
-        currScore += 1;
+        $(this).remove(); //deletes block once animation is complete
+        currScore += 1; //adds a score once the block completes animation
       },
-      progress: function() {
-        var characterPos = $character.position();
-        var cLeft = characterPos.left;
-        var cRight = characterPos.left + characterWidth;
-        var cTop = characterPos.top;
-        var cBot = characterPos.top + characterHeight;
+      progress: function() { //collision detection below
+        var characterPos        = $character.position();
+        var cLeft               = characterPos.left;
+        var cRight              = characterPos.left + characterWidth;
+        var cTop                = characterPos.top;
+        var cBot                = characterPos.top + characterHeight;
 
-        var $block = $(this);
-        var blockPos = $block.position();
-        var blockHeight = $block.height();
+        var $block              = $(this);
+        var blockPos            = $block.position();
+        var blockHeight         = $block.height();
 
-        var bLeft = blockPos.left;
-        var bRight = blockPos.left + blockWidth;
-        var bTop = blockPos.top;
-        var bBot = blockPos.top + blockHeight;
+        var bLeft               = blockPos.left;
+        var bRight              = blockPos.left + blockWidth;
+        var bTop                = blockPos.top;
+        var bBot                = blockPos.top + blockHeight;
 
         var horizontalCollision = cLeft < bRight && bLeft < cRight;
-        var verticalCollision = cTop < bBot && cBot > bTop;
+        //if the x position left side of the character is less than the x position of the right side of the box && the x position of the left side of the block is less than the x position of the right side of the character then there is a collision along the x axis
+        var verticalCollision   = cTop < bBot && cBot > bTop;
+        //if the y position of the top of the character is less than the y position of the bottom of the box && if the y position of the bottom of the character is greater than the y position of the top of the block then there is a vertical collision
 
         if (horizontalCollision && verticalCollision) {
-          stopGame();
+          stopGame(); //game stops if collision is detected
         }
       }
     });
   };
 
-  var scroll = function(el, speed) {
-    //scrolls the background, time controls the speed
-    el.animate({ "background-position": "-" + 1000 + "px" }, speed, 'linear', function() {
-      //resets background back to 0
-      el.css('background-position', '0');
-      scroll(el, speed);
-    });
-  };
-
   var blockGeneration = function() {
-    durationTillNextBlock -= gameLoopDuration;
-
+    currentBlockGenerationSpeed = Math.floor((Math.random() * 1000) + 400);
+    durationTillNextBlock -= gameLoopDuration; //sets interval for next block
     if (durationTillNextBlock <= 0) {
-      // [300, 200]
       createBlock("blockTop");
       createBlock("blockBottom");
       durationTillNextBlock = currentBlockGenerationSpeed;
@@ -226,8 +241,20 @@ $(document).ready(function() {
 
   var score = function() {
     mexicanMusic.stop();
-    trump10ftTall.play();
-    muricaMusic.play().fadeIn(4).loop(true);
+    var randText = (Math.random());
+    console.log(randText)
+    if (randText < 0.5){
+      $loserText.css({"background": "url('./images/greatWall.png')", "background-repeat": "no-repeat"});
+      greatWall.play();
+    } else {
+      $loserText.css({"background": "url('./images/tallerWall.png')", "background-repeat": "no-repeat"});
+      trump10ftTall.play();
+    }
+    setTimeout(function() {
+      muricaMusic.play();
+    }, 1500);
+    $trump.animate({left: 280}, 300, "linear");
+    $loserText.animate({top: 25}, 150, "linear");
     var actualScore = currScore / 2;
     $scoreScreen.show();
     $playerScore.html('<h1 class="scoreText">' + actualScore + '</h1>');
@@ -239,7 +266,12 @@ $(document).ready(function() {
   };
 
   var resetGame = function() {
-    muricaMusic.stop();
+    $ground.css({"-webkit-animation-play-state": "running",
+                         "animation-play-state": "running"});
+    $background.css({"-webkit-animation-play-state": "running",
+                             "animation-play-state": "running"});
+    $trump.css({left: 1000});
+    $loserText.css({top: -250});
     var $blockTop = $(".blockTop");
     var $blockBottom = $(".blockBottom");
     $blockTop.remove();
@@ -250,11 +282,14 @@ $(document).ready(function() {
     started = false;
     $character.css({ transform: "initial" });
     $startScreen.show();
+    muricaMusic.stop();
     gameWait();
   };
 
   var startGame = function() {
     $startScreen.hide();
+    $usa.css({left:0});
+    $usa.show().animate({left: 1000}, 2000, "linear");
     //gameLoop loops functions that require to be run ~60 times per second
     gameLoop = setInterval(function() {
       var position = $character.position();
@@ -269,5 +304,4 @@ $(document).ready(function() {
   };
   //loop end
   gameWait();
-
 });
