@@ -133,11 +133,9 @@ $(document).ready(function() {
 
   //this function is for listening to user hitting spacebar
   var movementEvent = function (e) {
-    console.log(e)
     if (e.keyCode == keycode || e.type == 'click') {
       //how many times the character moves - multiplies the position.top below. higher value produces smoother movement but longer animations
       characterMovement += characterMovementIncrease;
-
       if (started == false) {
         clearInterval(bounce); //once user hits spacebar the bounce effect loop stops
         $character.stop(true, true); //stops all animation on character
@@ -151,7 +149,6 @@ $(document).ready(function() {
   }
 
   $(document).on("keyup", movementEvent);
-
   $innerContainer.on('click', movementEvent);
 
 //this function adds gravity to the character
