@@ -214,7 +214,7 @@ to {background-position: -64px 0;}
 #character {
   position: relative;
   display: inline-block;
-  background: url("./images/MexicanL.png");
+  background: url("./images/mexicanL.png");
   background-repeat: no-repeat;
   background-position: -170px -168px;
   width: 63px;
