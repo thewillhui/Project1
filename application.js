@@ -1,4 +1,4 @@
-        /*
+/*
 Pseudo code
 
 1. Create viewport
@@ -99,11 +99,6 @@ $(document).ready(function() {
   var randBlockHeight = function() {
     return Math.floor((Math.random() * 230) + 150);
   };
-
-  //Random interval generator for block generation frequency
-  // var randomInt = function() {
-  //   return Math.floor((Math.random() * 3000) + 500);
-  // };
 
   //this function stops the animations and generation of blocks
   var stopGame = function() {
@@ -229,28 +224,30 @@ $(document).ready(function() {
     });
   };
 
+//block generate parameters
   var blockGeneration = function() {
-    currentBlockGenerationSpeed = Math.floor((Math.random() * 1000) + 400);
+    currentBlockGenerationSpeed = Math.floor((Math.random() * 1000) + 400); //random number between 400 and 1000 milliseconds to randomise block generation
     durationTillNextBlock -= gameLoopDuration; //sets interval for next block
     if (durationTillNextBlock <= 0) {
-      createBlock("blockTop");
-      createBlock("blockBottom");
+      createBlock("blockTop"); //creates block with class blockTop
+      createBlock("blockBottom"); //creates block with class blockBottom
       durationTillNextBlock = currentBlockGenerationSpeed;
     }
   };
 
+//score screen and the animations/sounds it should play
   var score = function() {
     mexicanMusic.stop();
     var randText = (Math.random());
     console.log(randText)
-    if (randText < 0.5){
+    if (randText < 0.5){ //chooses between 2 different loser sounds/text
       $loserText.css({"background": "url('./images/greatWall.png')", "background-repeat": "no-repeat"});
       greatWall.play();
     } else {
       $loserText.css({"background": "url('./images/tallerWall.png')", "background-repeat": "no-repeat"});
       trump10ftTall.play();
     }
-    setTimeout(function() {
+    setTimeout(function() { //slight delay to let the first sound to finish playing
       muricaMusic.play();
     }, 1500);
     $trump.animate({left: 280}, 300, "linear");
@@ -258,13 +255,14 @@ $(document).ready(function() {
     var actualScore = currScore / 2;
     $scoreScreen.show();
     $playerScore.html('<h1 class="scoreText">' + actualScore + '</h1>');
-    //append currScore to bestScore array, return highest score
+    //push actualScore to bestScore array, return highest score
     bestScore.push(actualScore);
     var maxScore = Math.max.apply(Math, bestScore);
     $bestScore.html('<h1 class="scoreText">' + maxScore + '</h1>');
     $restartBtn.off().on("click", resetGame);
   };
 
+//resets the game parameters and variables back to initial state
   var resetGame = function() {
     $ground.css({"-webkit-animation-play-state": "running",
                          "animation-play-state": "running"});
