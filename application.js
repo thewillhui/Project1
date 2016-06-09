@@ -41,7 +41,6 @@ $(document).ready(function() {
   var $background     = $("#background");
   var $ground         = $("#ground");
   var $innerContainer = $("#innerContainer");
-  var $gameScreen     = $("gameScreen");
   var $startScreen    = $("#startScreen");
   var $pressPlay      = $("#pressPlay");
   var $scoreScreen    = $("#scoreScreen");
@@ -98,7 +97,7 @@ $(document).ready(function() {
 
   //Random height generator for the blocks
   var randBlockHeight = function() {
-    return Math.floor((Math.random() * 230) + 150);
+    return Math.floor((Math.random() * 220) + 50);
   };
 
   //this function stops the animations and generation of blocks
@@ -189,8 +188,8 @@ $(document).ready(function() {
     var rBlockHeight = randBlockHeight(); //block heights are randomly generated
     $innerContainer.append($newElem); //places the new block inside the inner container div
     $newElem.css({
-      left: xMax,
-      height: rBlockHeight
+      "left": xMax,
+      "height": rBlockHeight
     }).animate({ //animates the block to move from right to left
       left: xMin - blockWidth
     }, {
@@ -243,7 +242,6 @@ $(document).ready(function() {
   var score = function() {
     mexicanMusic.stop();
     var randText = (Math.random());
-    console.log(randText)
     if (randText < 0.5){ //chooses between 2 different loser sounds/text
       $loserText.css({"background": "url('./images/greatWall.png')", "background-repeat": "no-repeat"});
       greatWall.play();
@@ -255,7 +253,7 @@ $(document).ready(function() {
       muricaMusic.play();
     }, 1500);
     $trump.animate({left: 280}, 300, "linear");
-    $loserText.animate({top: 25}, 150, "linear");
+    $loserText.animate({left: 25}, 150, "linear");
     var actualScore = currScore / 2;
     $scoreScreen.show();
     $playerScore.html('<h1 class="scoreText">' + actualScore + '</h1>');
@@ -273,7 +271,7 @@ $(document).ready(function() {
     $background.css({"-webkit-animation-play-state": "running",
                              "animation-play-state": "running"});
     $trump.css({left: 1000});
-    $loserText.css({top: -250});
+    $loserText.css({left: -500});
     var $blockTop = $(".blockTop");
     var $blockBottom = $(".blockBottom");
     $blockTop.remove();
