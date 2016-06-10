@@ -286,6 +286,7 @@ $(document).ready(function() {
     gameWait();
   };
 
+//function to start the game after the title screen
   var startGame = function() {
     $startScreen.hide();
     $usa.css({left:0});
