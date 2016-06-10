@@ -242,7 +242,7 @@ $(document).ready(function() {
   var score = function() {
     mexicanMusic.stop();
     var randText = (Math.random());
-    if (randText <= 0.5){ //chooses between 2 different loser sounds/text
+    if (randText <= 0.55){ //chooses between 2 different loser sounds/text
       $loserText.css({"background": "url('./images/greatWall.png')", "background-repeat": "no-repeat"});
       greatWall.play();
     } else {
