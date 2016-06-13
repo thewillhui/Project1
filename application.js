@@ -122,7 +122,7 @@ $(document).ready(function() {
     $usa.hide();
     $scoreScreen.hide();
     $character.css({ top: characterInitialTop, left: characterInitialLeft })
-    if (started == false) {
+    if (started === false) {
       bounce = setInterval(function() {
         $character.effect("bounce", { times: 1 }, 1000); //adds a floating effect to the character
         $pressPlay.effect("pulsate", { times: 0.5 }, 1000); //adds a flashing effect to press play text like in retro games
@@ -132,10 +132,10 @@ $(document).ready(function() {
 
   //this function is for listening to user hitting spacebar
   var movementEvent = function (e) {
-    if (e.keyCode == keycode || e.type == 'click') {
+    if (e.keyCode === keycode || e.type === 'click') {
       //how many times the character moves - multiplies the position.top below. higher value produces smoother movement but longer animations
       characterMovement += characterMovementIncrease;
-      if (started == false) {
+      if (started === false) {
         clearInterval(bounce); //once user hits spacebar the bounce effect loop stops
         $character.stop(true, true); //stops all animation on character
         $character.appendTo($innerContainer); //jQuery UI effects places the character div into a wrapper div. this just places the character back in the correct place
